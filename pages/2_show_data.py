@@ -60,13 +60,32 @@ else:
         if fig:
             st.plotly_chart(fig, use_container_width=True)
 
-            buffer = io.BytesIO()
-            img_bytes = pio.to_image(fig, format='png', width=1200, height=800, scale=2)
-            st.sidebar.download_button(
-                label="Скачать график (PNG)",
-                data=img_bytes,
-                file_name=f"{chart_type.lower().replace(' ', '_')}_plot_{datetime.datetime.now().strftime("%d%m%Y%H%M%S")}.png",
-                mime="image/png"
-            )
+            # buffer = io.BytesIO()
+            # img_bytes = pio.to_image(fig, format='png', width=1200, height=800, scale=2)
+            # st.sidebar.download_button(
+            #     label="Скачать график (PNG)",
+            #     data=img_bytes,
+            #     file_name=f"{chart_type.lower().replace(' ', '_')}_plot_{datetime.datetime.now().strftime("%d%m%Y%H%M%S")}.png",
+            #     mime="image/png"
+            # )
+
+            try:
+                img_bytes = pio.to_image(
+                    fig, format='png', width=1200, height=800, scale=2, engine="kaleido" )
+                st.download_button(
+                    "Скачать (PNG)",
+                    img_bytes,
+                    f"{chart_type.lower().replace(' ', '_')}_plot_{datetime.datetime.now().strftime("%d%m%Y%H%M%S")}.png",
+                    "image/png"
+                )
+            except Exception as e:
+                svg_str = fig.to_svg()
+                st.download_button(
+                    "Скачать (SVG)",
+                    svg_str,
+                    f"{chart_type.lower().replace(' ', '_')}_plot_{datetime.datetime.now().strftime("%d%m%Y%H%M%S")}.svg",
+                    "image/svg+xml"
+                )
+
     else:
         st.warning("Выберите хотя бы одну колонку для оси X.")
