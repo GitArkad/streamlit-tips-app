@@ -69,23 +69,22 @@ else:
             #     mime="image/png"
             # )
 
-            try:
-                img_bytes = pio.to_image(
-                    fig, format='png', width=1200, height=800, scale=2, engine="kaleido" )
-                st.download_button(
-                    "Скачать (PNG)",
-                    img_bytes,
-                    f"{chart_type.lower().replace(' ', '_')}_plot_{datetime.datetime.now().strftime("%d%m%Y%H%M%S")}.png",
-                    "image/png"
-                )
-            except Exception as e:
-                svg_str = fig.to_svg()
-                st.download_button(
-                    "Скачать (SVG)",
-                    svg_str,
-                    f"{chart_type.lower().replace(' ', '_')}_plot_{datetime.datetime.now().strftime("%d%m%Y%H%M%S")}.svg",
-                    "image/svg+xml"
-                )
+        try:
+            img_bytes = pio.to_image(fig, format='png', width=1200, height=800, scale=2)
+            st.download_button(
+                "Скачать (PNG)",
+                img_bytes,
+                f"{chart_type.lower().replace(' ', '_')}_plot_{datetime.datetime.now().strftime("%d%m%Y%H%M%S")}.png",
+                "image/png"
+            )
+        except Exception:
+            vega_json = pio.to_json(fig)
+            st.download_button(
+                "Скачать (JSON)",
+                vega_json,
+                f"{chart_type.lower().replace(' ', '_')}_plot_{datetime.datetime.now().strftime("%d%m%Y%H%M%S")}.json",
+                "application/json"
+            )
 
     else:
         st.warning("Выберите хотя бы одну колонку для оси X.")
